@@ -157,7 +157,7 @@ export function AttackSimulation({ scenario }: AttackSimulationProps) {
             />
           </div>
           
-          <div className="space-y-2 max-h-32 overflow-y-auto">
+          <div className="space-y-2">
             {getCurrentSteps().map((step, index) => (
               <div 
                 key={index}

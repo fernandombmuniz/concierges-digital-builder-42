@@ -241,13 +241,13 @@ export function Presentation() {
           <h2 className="text-2xl font-semibold mb-6">Simulações de Ataque</h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="h-[600px]">
+            <div className="h-[700px]">
               <AttackSimulation scenario="firewall" />
             </div>
-            <div className="h-[600px]">
+            <div className="h-[700px]">
               <AttackSimulation scenario="endpoint" />
             </div>
-            <div className="h-[600px]">
+            <div className="h-[700px]">
               <AttackSimulation scenario="backup" />
             </div>
           </div>
@@ -392,38 +392,17 @@ export function Presentation() {
           {/* Background com efeito de proteção */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
           
-          {/* Ameaças tentando atacar - animadas */}
-          <div className="absolute top-10 left-10 text-red-500 text-3xl animate-bounce">💥</div>
-          <div className="absolute top-20 right-12 text-red-500 text-2xl animate-pulse delay-300">🔥</div>
-          <div className="absolute bottom-32 left-16 text-red-500 text-2xl animate-ping delay-700">⚠️</div>
-          <div className="absolute bottom-40 right-8 text-red-500 text-3xl animate-bounce delay-500">🎯</div>
-          <div className="absolute top-1/3 left-4 text-red-500 text-2xl animate-pulse delay-1000">💀</div>
-          <div className="absolute top-1/2 right-4 text-red-500 text-2xl animate-bounce delay-200">🚨</div>
+          {/* Pequenos pontos vermelhos representando ameaças */}
+          <div className="absolute top-16 left-8 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75"></div>
+          <div className="absolute top-1/4 right-12 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-500 opacity-60"></div>
+          <div className="absolute top-1/3 left-12 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-300 opacity-50"></div>
+          <div className="absolute bottom-1/3 right-16 w-2 h-2 bg-red-500 rounded-full animate-ping delay-700 opacity-75"></div>
+          <div className="absolute bottom-1/4 left-20 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-1000 opacity-60"></div>
+          <div className="absolute top-1/2 right-20 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-200 opacity-50"></div>
           
-          {/* Movimento das ameaças sendo bloqueadas */}
-          <div className="absolute top-16 left-1/4 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75"></div>
-          <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-500 opacity-60"></div>
-          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-300 opacity-50"></div>
-          
-          {/* Area de proteção com logo da Concierge */}
+          {/* Area de proteção com logo da Concierge maior */}
           <div className="relative z-10 mb-8 flex flex-col items-center">
             <div className="relative flex flex-col items-center">
-              {/* Logo do cliente vulnerável (se houver) */}
-              {profile.empresa.logoClienteUrl && (
-                <div className="mb-8 relative">
-                  <div className="bg-white p-4 rounded-lg shadow-lg border-2 border-yellow-400 animate-pulse">
-                    <img 
-                      src={profile.empresa.logoClienteUrl} 
-                      alt={`${profile.empresa.nome} - Precisa de Proteção`} 
-                      className="h-12 w-auto"
-                    />
-                  </div>
-                  <div className="text-xs text-yellow-400 mt-2 flex items-center justify-center gap-1">
-                    <AlertTriangle className="h-3 w-3" />
-                    Vulnerável
-                  </div>
-                </div>
-              )}
               
               {/* Escudo protetor da Concierge */}
               <div className="relative">
@@ -446,22 +425,6 @@ export function Presentation() {
                 <div className="absolute w-68 h-68 border border-primary/20 rounded-full animate-ping delay-2000 -top-12 -left-12"></div>
               </div>
               
-              {/* Logo do cliente protegida */}
-              {profile.empresa.logoClienteUrl && (
-                <div className="mt-8 relative">
-                  <div className="bg-white p-4 rounded-lg shadow-lg border-2 border-success">
-                    <img 
-                      src={profile.empresa.logoClienteUrl} 
-                      alt={`${profile.empresa.nome} - Protegida pela Concierge`} 
-                      className="h-12 w-auto"
-                    />
-                  </div>
-                  <div className="text-xs text-success mt-2 flex items-center justify-center gap-1">
-                    <Shield className="h-3 w-3" />
-                    Empresa Protegida
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           

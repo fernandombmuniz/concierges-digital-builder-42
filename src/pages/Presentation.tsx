@@ -187,6 +187,16 @@ export function Presentation() {
                   Pretende aumentar velocidade
                 </div>
               )}
+              <div className="mt-3 space-y-1">
+                {profile.infraestrutura.links.map((link, index) => (
+                  <div key={index} className="text-xs text-muted-foreground">
+                    {link.provedor} - {link.velocidade}
+                    {link.aumentoPretendido && link.novaVelocidade && (
+                      <span className="text-primary ml-1">→ {link.novaVelocidade}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             
             <div className="text-center p-4 border border-border rounded-lg">
@@ -203,13 +213,6 @@ export function Presentation() {
             <p className="text-muted-foreground mb-2">
               <strong>Contato:</strong> {profile.infraestrutura.contatoNome} ({profile.infraestrutura.contatoCargo})
             </p>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {profile.infraestrutura.links.map((link, index) => (
-                <Badge key={index} variant="secondary">
-                  {link.provedor} - {link.velocidade}
-                </Badge>
-              ))}
-            </div>
             
             {/* Notas Internas */}
             <div className="mt-6">
@@ -238,13 +241,13 @@ export function Presentation() {
           <h2 className="text-2xl font-semibold mb-6">Simulações de Ataque</h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="h-[400px]">
+            <div className="h-[600px]">
               <AttackSimulation scenario="firewall" />
             </div>
-            <div className="h-[400px]">
+            <div className="h-[600px]">
               <AttackSimulation scenario="endpoint" />
             </div>
-            <div className="h-[400px]">
+            <div className="h-[600px]">
               <AttackSimulation scenario="backup" />
             </div>
           </div>

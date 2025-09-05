@@ -159,19 +159,34 @@ export function Presentation() {
             <div className="text-center p-4 border border-border rounded-lg">
               <Users className="h-8 w-8 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold">{profile.infraestrutura.usuariosAtuais}</div>
-              <div className="text-sm text-muted-foreground">Usuários</div>
+              <div className="text-sm text-muted-foreground">Usuários Atuais</div>
+              {profile.infraestrutura.usuariosPretensao && (
+                <div className="text-xs text-primary mt-1">
+                  Pretende aumentar para {profile.infraestrutura.usuariosEstimativa}
+                </div>
+              )}
             </div>
             
             <div className="text-center p-4 border border-border rounded-lg">
               <Monitor className="h-8 w-8 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold">{profile.infraestrutura.dispositivosAtuais}</div>
-              <div className="text-sm text-muted-foreground">Dispositivos</div>
+              <div className="text-sm text-muted-foreground">Dispositivos Atuais</div>
+              {profile.infraestrutura.dispositivosPretensao && (
+                <div className="text-xs text-primary mt-1">
+                  Pretende aumentar para {profile.infraestrutura.dispositivosEstimativa}
+                </div>
+              )}
             </div>
             
             <div className="text-center p-4 border border-border rounded-lg">
               <Wifi className="h-8 w-8 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold">{profile.infraestrutura.links.length}</div>
-              <div className="text-sm text-muted-foreground">Links Internet</div>
+              <div className="text-sm text-muted-foreground">Links Internet Atuais</div>
+              {profile.infraestrutura.links.some(link => link.aumentoPretendido) && (
+                <div className="text-xs text-primary mt-1">
+                  Pretende aumentar velocidade
+                </div>
+              )}
             </div>
             
             <div className="text-center p-4 border border-border rounded-lg">
@@ -223,9 +238,15 @@ export function Presentation() {
           <h2 className="text-2xl font-semibold mb-6">Simulações de Ataque</h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <AttackSimulation scenario="firewall" />
-            <AttackSimulation scenario="endpoint" />
-            <AttackSimulation scenario="backup" />
+            <div className="h-[400px]">
+              <AttackSimulation scenario="firewall" />
+            </div>
+            <div className="h-[400px]">
+              <AttackSimulation scenario="endpoint" />
+            </div>
+            <div className="h-[400px]">
+              <AttackSimulation scenario="backup" />
+            </div>
           </div>
         </CyberCard>
 
@@ -363,56 +384,82 @@ export function Presentation() {
           </div>
         </CyberCard>
 
-        {/* CTA Final - Castelo de Proteção */}
-        <CyberCard className="p-8 text-center relative overflow-hidden" glowing>
-          {/* Background com efeito de castelo */}
+        {/* CTA Final - Proteção Animada */}
+        <CyberCard className="p-8 text-center relative overflow-hidden min-h-[500px]" glowing>
+          {/* Background com efeito de proteção */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
           
-          {/* Ameaças sendo bloqueadas - elementos decorativos */}
-          <div className="absolute top-4 left-4 text-destructive/30 text-2xl animate-pulse">⚠️</div>
-          <div className="absolute top-8 right-6 text-destructive/30 text-xl animate-pulse delay-300">🔥</div>
-          <div className="absolute bottom-20 left-8 text-destructive/30 text-lg animate-pulse delay-700">💀</div>
-          <div className="absolute bottom-16 right-4 text-destructive/30 text-xl animate-pulse delay-500">🎯</div>
+          {/* Ameaças tentando atacar - animadas */}
+          <div className="absolute top-10 left-10 text-red-500 text-3xl animate-bounce">💥</div>
+          <div className="absolute top-20 right-12 text-red-500 text-2xl animate-pulse delay-300">🔥</div>
+          <div className="absolute bottom-32 left-16 text-red-500 text-2xl animate-ping delay-700">⚠️</div>
+          <div className="absolute bottom-40 right-8 text-red-500 text-3xl animate-bounce delay-500">🎯</div>
+          <div className="absolute top-1/3 left-4 text-red-500 text-2xl animate-pulse delay-1000">💀</div>
+          <div className="absolute top-1/2 right-4 text-red-500 text-2xl animate-bounce delay-200">🚨</div>
           
-          {/* Logo da Concierge como escudo protetor central */}
-          <div className="relative z-10 mb-8">
-            <div className="relative flex justify-center items-center">
-              {/* Efeito de escudo/muro atrás da logo */}
-              <div className="absolute w-40 h-40 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full blur-xl"></div>
-              <div className="absolute w-32 h-32 bg-gradient-to-br from-success/20 to-success/10 rounded-full blur-lg"></div>
+          {/* Movimento das ameaças sendo bloqueadas */}
+          <div className="absolute top-16 left-1/4 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75"></div>
+          <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-500 opacity-60"></div>
+          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-300 opacity-50"></div>
+          
+          {/* Area de proteção com logo da Concierge */}
+          <div className="relative z-10 mb-8 flex flex-col items-center">
+            <div className="relative flex flex-col items-center">
+              {/* Logo do cliente vulnerável (se houver) */}
+              {profile.empresa.logoClienteUrl && (
+                <div className="mb-8 relative">
+                  <div className="bg-white p-4 rounded-lg shadow-lg border-2 border-yellow-400 animate-pulse">
+                    <img 
+                      src={profile.empresa.logoClienteUrl} 
+                      alt={`${profile.empresa.nome} - Precisa de Proteção`} 
+                      className="h-12 w-auto"
+                    />
+                  </div>
+                  <div className="text-xs text-yellow-400 mt-2 flex items-center justify-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    Vulnerável
+                  </div>
+                </div>
+              )}
               
-              {/* Logo principal da Concierge como centro do escudo */}
-              <div className="relative z-20 p-6 bg-background/80 backdrop-blur-sm rounded-full border-4 border-primary/50 shadow-2xl">
-                <img 
-                  src="/concierge-logo-new.png" 
-                  alt="Concierge - Seu Escudo Digital" 
-                  className="h-20 w-auto filter drop-shadow-lg"
-                />
+              {/* Escudo protetor da Concierge */}
+              <div className="relative">
+                {/* Efeito de escudo/proteção */}
+                <div className="absolute w-44 h-44 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute w-36 h-36 bg-gradient-to-br from-success/30 to-success/10 rounded-full blur-lg animate-pulse delay-500"></div>
+                
+                {/* Logo principal da Concierge como escudo */}
+                <div className="relative z-20 p-8 bg-background/90 backdrop-blur-sm rounded-full border-4 border-primary shadow-2xl">
+                  <img 
+                    src="/concierge-logo-new.png" 
+                    alt="Concierge - Seu Escudo Digital" 
+                    className="h-24 w-auto filter drop-shadow-lg"
+                  />
+                </div>
+                
+                {/* Ondas de proteção */}
+                <div className="absolute w-52 h-52 border-2 border-primary/40 rounded-full animate-ping -top-4 -left-4"></div>
+                <div className="absolute w-60 h-60 border border-success/30 rounded-full animate-pulse delay-1000 -top-8 -left-8"></div>
+                <div className="absolute w-68 h-68 border border-primary/20 rounded-full animate-ping delay-2000 -top-12 -left-12"></div>
               </div>
               
-              {/* Efeitos de proteção ao redor */}
-              <div className="absolute w-48 h-48 border border-primary/30 rounded-full animate-pulse"></div>
-              <div className="absolute w-56 h-56 border border-success/20 rounded-full animate-pulse delay-1000"></div>
-            </div>
-            
-            {/* Logo do cliente protegida atrás do escudo */}
-            {profile.empresa.logoClienteUrl && (
-              <div className="mt-6 relative">
-                <div className="flex justify-center">
-                  <div className="bg-white p-4 rounded-lg shadow-lg border-2 border-success/50">
+              {/* Logo do cliente protegida */}
+              {profile.empresa.logoClienteUrl && (
+                <div className="mt-8 relative">
+                  <div className="bg-white p-4 rounded-lg shadow-lg border-2 border-success">
                     <img 
                       src={profile.empresa.logoClienteUrl} 
                       alt={`${profile.empresa.nome} - Protegida pela Concierge`} 
                       className="h-12 w-auto"
                     />
                   </div>
+                  <div className="text-xs text-success mt-2 flex items-center justify-center gap-1">
+                    <Shield className="h-3 w-3" />
+                    Empresa Protegida
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
-                  <Shield className="h-3 w-3 text-success" />
-                  Empresa Protegida
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           
           <h2 className="text-3xl font-bold mb-4 gradient-cyber bg-clip-text text-transparent relative z-10">

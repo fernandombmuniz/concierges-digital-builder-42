@@ -400,20 +400,20 @@ export function Presentation() {
           <div className="absolute top-1/3 left-4 w-1 h-1 bg-red-500 rounded-full animate-pulse delay-500 opacity-60"></div>
           <div className="absolute top-2/3 right-8 w-1.5 h-1.5 bg-red-500 rounded-full animate-ping delay-200 opacity-70"></div>
           
-          {/* Linhas vermelhas de ataque vindo de várias direções */}
-          {/* Linhas da esquerda */}
-          <div className="absolute top-1/4 left-0 w-32 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse opacity-80 origin-left transform rotate-12"></div>
-          <div className="absolute top-1/2 left-0 w-28 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse delay-300 opacity-80"></div>
-          <div className="absolute bottom-1/4 left-0 w-30 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse delay-600 opacity-80 origin-left transform -rotate-12"></div>
+          {/* Linhas vermelhas de ataque direcionadas ao centro (logo) */}
+          {/* Linhas da esquerda apontando para o centro */}
+          <div className="absolute top-1/4 left-0 w-40 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse opacity-80 origin-left transform rotate-[25deg]"></div>
+          <div className="absolute top-1/2 left-0 w-44 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse delay-300 opacity-80"></div>
+          <div className="absolute bottom-1/4 left-0 w-40 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-red-400 animate-pulse delay-600 opacity-80 origin-left transform -rotate-[25deg]"></div>
           
-          {/* Linhas da direita */}
-          <div className="absolute top-1/4 right-0 w-32 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-200 opacity-80 origin-right transform -rotate-12"></div>
-          <div className="absolute top-1/2 right-0 w-28 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-500 opacity-80"></div>
-          <div className="absolute bottom-1/4 right-0 w-30 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-800 opacity-80 origin-right transform rotate-12"></div>
+          {/* Linhas da direita apontando para o centro */}
+          <div className="absolute top-1/4 right-0 w-40 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-200 opacity-80 origin-right transform -rotate-[25deg]"></div>
+          <div className="absolute top-1/2 right-0 w-44 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-500 opacity-80"></div>
+          <div className="absolute bottom-1/4 right-0 w-40 h-0.5 bg-gradient-to-l from-transparent via-red-500 to-red-400 animate-pulse delay-800 opacity-80 origin-right transform rotate-[25deg]"></div>
           
-          {/* Linhas de cima */}
-          <div className="absolute top-0 left-1/4 w-0.5 h-24 bg-gradient-to-b from-transparent via-red-500 to-red-400 animate-pulse delay-400 opacity-80 origin-top transform rotate-12"></div>
-          <div className="absolute top-0 right-1/4 w-0.5 h-24 bg-gradient-to-b from-transparent via-red-500 to-red-400 animate-pulse delay-700 opacity-80 origin-top transform -rotate-12"></div>
+          {/* Linhas de cima apontando para o centro */}
+          <div className="absolute top-0 left-1/4 w-0.5 h-32 bg-gradient-to-b from-transparent via-red-500 to-red-400 animate-pulse delay-400 opacity-80 origin-top transform rotate-[20deg]"></div>
+          <div className="absolute top-0 right-1/4 w-0.5 h-32 bg-gradient-to-b from-transparent via-red-500 to-red-400 animate-pulse delay-700 opacity-80 origin-top transform -rotate-[20deg]"></div>
           
           {/* Area central com proteção */}
           <div className="relative z-10 mb-8 flex flex-col items-center">
@@ -432,7 +432,7 @@ export function Presentation() {
                 {/* Castelo protetor */}
                 <div className="relative p-6 bg-background/80 backdrop-blur-sm rounded-xl border-2 border-primary/50 shadow-2xl">
                   <img 
-                    src="/lovable-uploads/d987fa43-236e-4037-a954-c45a375c36a9.png" 
+                    src="/lovable-uploads/13dd3521-d3c8-4f6d-b234-5435a5350cfd.png" 
                     alt="Castelo Concierge - Proteção Digital" 
                     className="h-28 w-auto filter drop-shadow-xl"
                   />

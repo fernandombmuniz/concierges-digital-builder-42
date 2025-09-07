@@ -392,37 +392,47 @@ export function Presentation() {
           {/* Background com efeito de proteção */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
           
-          {/* Pequenos pontos vermelhos representando ameaças */}
-          <div className="absolute top-16 left-8 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75"></div>
-          <div className="absolute top-1/4 right-12 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-500 opacity-60"></div>
-          <div className="absolute top-1/3 left-12 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-300 opacity-50"></div>
-          <div className="absolute bottom-1/3 right-16 w-2 h-2 bg-red-500 rounded-full animate-ping delay-700 opacity-75"></div>
-          <div className="absolute bottom-1/4 left-20 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse delay-1000 opacity-60"></div>
-          <div className="absolute top-1/2 right-20 w-1 h-1 bg-red-500 rounded-full animate-bounce delay-200 opacity-50"></div>
+          {/* Linhas vermelhas de ataque sendo repelidas pelo castelo */}
+          <div className="absolute top-1/4 left-8 w-16 h-0.5 bg-gradient-to-r from-red-500 to-transparent animate-pulse opacity-75"></div>
+          <div className="absolute top-1/3 right-8 w-20 h-0.5 bg-gradient-to-l from-red-500 to-transparent animate-pulse delay-300 opacity-75"></div>
+          <div className="absolute bottom-1/3 left-12 w-14 h-0.5 bg-gradient-to-r from-red-500 to-transparent animate-pulse delay-500 opacity-75"></div>
+          <div className="absolute bottom-1/4 right-12 w-18 h-0.5 bg-gradient-to-l from-red-500 to-transparent animate-pulse delay-700 opacity-75"></div>
+          <div className="absolute top-1/2 left-6 w-12 h-0.5 bg-gradient-to-r from-red-500 to-transparent animate-pulse delay-1000 opacity-75"></div>
+          <div className="absolute top-2/3 right-6 w-16 h-0.5 bg-gradient-to-l from-red-500 to-transparent animate-pulse delay-200 opacity-75"></div>
           
-          {/* Area de proteção com logo da Concierge maior */}
+          {/* Area de proteção */}
           <div className="relative z-10 mb-8 flex flex-col items-center">
-            <div className="relative flex flex-col items-center">
+            <div className="relative flex items-center justify-center gap-8">
               
-              {/* Escudo protetor da Concierge */}
-              <div className="relative">
-                {/* Efeito de escudo/proteção */}
-                <div className="absolute w-44 h-44 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full blur-xl animate-pulse"></div>
-                <div className="absolute w-36 h-36 bg-gradient-to-br from-success/30 to-success/10 rounded-full blur-lg animate-pulse delay-500"></div>
-                
-                {/* Logo principal da Concierge como escudo */}
-                <div className="relative z-20 p-8 bg-background/90 backdrop-blur-sm rounded-full border-4 border-primary shadow-2xl">
+              {/* Logo do cliente (protegida atrás) */}
+              {profile.empresa.logoClienteUrl && (
+                <div className="relative z-10">
                   <img 
-                    src="/concierge-logo-new.png" 
-                    alt="Concierge - Seu Escudo Digital" 
+                    src={profile.empresa.logoClienteUrl} 
+                    alt={profile.empresa.nome} 
+                    className="h-20 w-auto bg-white p-4 rounded-lg shadow-lg opacity-90"
+                  />
+                </div>
+              )}
+              
+              {/* Logo do castelo Concierge (na frente, protegendo) */}
+              <div className="relative z-20 -ml-4">
+                {/* Efeito de proteção emanando do castelo */}
+                <div className="absolute w-32 h-32 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-lg animate-pulse -top-4 -left-4"></div>
+                <div className="absolute w-28 h-28 bg-gradient-to-br from-success/20 to-success/5 rounded-full blur-md animate-pulse delay-500 -top-2 -left-2"></div>
+                
+                {/* Castelo protetor */}
+                <div className="relative p-4 bg-background/80 backdrop-blur-sm rounded-lg border-2 border-primary/50 shadow-xl">
+                  <img 
+                    src="/lovable-uploads/d987fa43-236e-4037-a954-c45a375c36a9.png" 
+                    alt="Castelo Concierge - Proteção Digital" 
                     className="h-24 w-auto filter drop-shadow-lg"
                   />
                 </div>
                 
-                {/* Ondas de proteção */}
-                <div className="absolute w-52 h-52 border-2 border-primary/40 rounded-full animate-ping -top-4 -left-4"></div>
-                <div className="absolute w-60 h-60 border border-success/30 rounded-full animate-pulse delay-1000 -top-8 -left-8"></div>
-                <div className="absolute w-68 h-68 border border-primary/20 rounded-full animate-ping delay-2000 -top-12 -left-12"></div>
+                {/* Ondas de proteção emanando do castelo */}
+                <div className="absolute w-36 h-36 border border-primary/30 rounded-full animate-ping -top-6 -left-6"></div>
+                <div className="absolute w-40 h-40 border border-success/20 rounded-full animate-pulse delay-1000 -top-8 -left-8"></div>
               </div>
               
             </div>

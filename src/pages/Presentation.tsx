@@ -436,7 +436,7 @@ export function Presentation() {
                     <img 
                       src={profile.empresa.logoClienteUrl} 
                       alt={profile.empresa.nome} 
-                      className="h-16 w-auto opacity-95"
+                      className="h-12 w-auto opacity-95"
                     />
                   </div>
                 </div>

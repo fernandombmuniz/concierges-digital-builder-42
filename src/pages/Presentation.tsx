@@ -17,7 +17,9 @@ import {
   Monitor, 
   Wifi, 
   Shield, 
-  AlertTriangle
+  AlertTriangle,
+  ShieldCheck,
+  Database
 } from 'lucide-react';
 
 export function Presentation() {
@@ -155,7 +157,7 @@ export function Presentation() {
             Visão Geral - {profile.empresa.nome}
           </h2>
           
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6 mb-6">
             <div className="text-center p-4 border border-border rounded-lg">
               <Users className="h-8 w-8 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold">{profile.infraestrutura.usuariosAtuais}</div>
@@ -203,6 +205,66 @@ export function Presentation() {
               <Users className="h-8 w-8 text-primary mx-auto mb-2" />
               <div className="text-2xl font-bold">{profile.infraestrutura.timeTI}</div>
               <div className="text-sm text-muted-foreground">Time TI</div>
+            </div>
+          </div>
+
+          {/* Cards de Segurança */}
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 border border-border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-2 mb-3">
+                <Shield className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold">Firewall</h3>
+              </div>
+              {profile.seguranca.possuiFirewall ? (
+                <div className="space-y-1 text-sm">
+                  <div><strong>Tipo:</strong> {profile.seguranca.firewallTipo}</div>
+                  <div><strong>Modelo:</strong> {profile.seguranca.firewallModelo}</div>
+                  <div><strong>Status:</strong> {profile.seguranca.firewallLocadoOuComprado}</div>
+                  <div className={`text-xs px-2 py-1 rounded ${profile.seguranca.firewallLicencaAtiva ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    Licença {profile.seguranca.firewallLicencaAtiva ? 'Ativa' : 'Inativa'}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-destructive">Não possui firewall</div>
+              )}
+            </div>
+
+            <div className="p-4 border border-border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold">Antivírus</h3>
+              </div>
+              {profile.seguranca.possuiAntivirusEndpoint ? (
+                <div className="space-y-1 text-sm">
+                  <div><strong>Tipo:</strong> {profile.seguranca.antivirusTipo}</div>
+                  <div><strong>Categoria:</strong> {profile.seguranca.antivirusCategoria}</div>
+                  <div className={`text-xs px-2 py-1 rounded ${profile.seguranca.antivirusGerenciado ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    {profile.seguranca.antivirusGerenciado ? 'Gerenciado' : 'Não Gerenciado'}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-destructive">Não possui antivírus</div>
+              )}
+            </div>
+
+            <div className="p-4 border border-border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-2 mb-3">
+                <Database className="h-5 w-5 text-primary" />
+                <h3 className="font-semibold">Backup</h3>
+              </div>
+              {profile.backup.possuiBackup ? (
+                <div className="space-y-1 text-sm">
+                  <div><strong>Tipo:</strong> {profile.backup.tipoBackup}</div>
+                  <div className={`text-xs px-2 py-1 rounded ${profile.backup.backupGerenciavel ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    {profile.backup.backupGerenciavel ? 'Gerenciável' : 'Não Gerenciável'}
+                  </div>
+                  <div className={`text-xs px-2 py-1 rounded mt-1 ${profile.backup.fazTesteRestore ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {profile.backup.fazTesteRestore ? 'Testa Restore' : 'Não Testa Restore'}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-destructive">Não possui backup</div>
+              )}
             </div>
           </div>
 

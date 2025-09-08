@@ -9,6 +9,8 @@ import { useProfile } from '@/contexts/ProfileContext';
 import { computeRisks } from '@/utils/riskCalculator';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { 
   ArrowLeft, 
   Edit, 
@@ -19,7 +21,8 @@ import {
   Shield, 
   AlertTriangle,
   ShieldCheck,
-  Database
+  Database,
+  FileText
 } from 'lucide-react';
 
 export function Presentation() {
@@ -35,45 +38,211 @@ export function Presentation() {
   };
 
   const exportToHTML = () => {
-    // Implementação simplificada - em produção seria mais robusta
     const htmlContent = `
       <!DOCTYPE html>
-      <html>
+      <html lang="pt-BR">
         <head>
-          <title>Apresentação ${profile.empresa.nome} - Concierge</title>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Relatório de Segurança Digital - ${profile.empresa.nome}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; background: #0B1220; color: #D7D8D8; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .section { margin-bottom: 30px; padding: 20px; background: #1a2332; border-radius: 8px; }
-            .risk-item { margin: 10px 0; padding: 15px; border-left: 4px solid #E63946; background: #2a3342; }
-            .logo { max-height: 60px; margin: 10px; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+              background: linear-gradient(135deg, #0B1220 0%, #1a2332 100%);
+              color: #D7D8D8; 
+              line-height: 1.6;
+              padding: 20px;
+            }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .header { 
+              text-align: center; 
+              margin-bottom: 40px; 
+              padding: 30px;
+              background: linear-gradient(135deg, #1a2332 0%, #2a3342 100%);
+              border-radius: 12px;
+              border: 1px solid #334155;
+            }
+            .logos { display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 20px; }
+            .logo { max-height: 80px; }
+            .client-logo { background: white; padding: 10px; border-radius: 8px; }
+            .section { 
+              margin-bottom: 30px; 
+              padding: 25px; 
+              background: linear-gradient(135deg, #1a2332 0%, #2a3342 100%);
+              border-radius: 12px; 
+              border: 1px solid #334155;
+            }
+            .section h2 { color: #3B82F6; margin-bottom: 20px; font-size: 1.5rem; }
+            .section h3 { color: #60A5FA; margin-bottom: 15px; font-size: 1.2rem; }
+            .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+            .card { 
+              background: #2a3342; 
+              padding: 20px; 
+              border-radius: 8px; 
+              border-left: 4px solid #3B82F6;
+            }
+            .risk-card { border-left-color: #EF4444; }
+            .security-card { border-left-color: #10B981; }
+            .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .info-item { background: #334155; padding: 15px; border-radius: 6px; }
+            .status-active { color: #10B981; font-weight: bold; }
+            .status-inactive { color: #EF4444; font-weight: bold; }
+            .status-warning { color: #F59E0B; font-weight: bold; }
+            ul { margin-left: 20px; }
+            li { margin-bottom: 8px; }
+            .footer { 
+              text-align: center; 
+              margin-top: 40px; 
+              padding: 20px; 
+              background: #1a2332; 
+              border-radius: 8px;
+              font-size: 0.9rem;
+              color: #94A3B8;
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <img src="/concierge-logo.png" class="logo" alt="Concierge">
-            ${profile.empresa.logoClienteUrl ? `<img src="${profile.empresa.logoClienteUrl}" class="logo" alt="Cliente">` : ''}
-            <h1>Apresentação de Segurança Digital</h1>
-            <h2>${profile.empresa.nome}</h2>
-          </div>
-          
-          <div class="section">
-            <h3>Visão Geral</h3>
-            <p><strong>Empresa:</strong> ${profile.empresa.nome}</p>
-            <p><strong>Setor:</strong> ${profile.empresa.setor}</p>
-            <p><strong>Usuários:</strong> ${profile.infraestrutura.usuariosAtuais}</p>
-            <p><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</p>
-          </div>
-          
-          <div class="section">
-            <h3>Riscos Identificados</h3>
-            ${risks.map(risk => `
-              <div class="risk-item">
-                <h4>${risk.titulo} (${risk.probabilidade}%)</h4>
-                <p>${risk.explicacao}</p>
-                <p><strong>Mitigação:</strong> ${risk.mitigacaoSugerida}</p>
+          <div class="container">
+            <div class="header">
+              <div class="logos">
+                <img src="/concierge-logo-new.png" class="logo" alt="Concierge">
+                ${profile.empresa.logoClienteUrl ? `<img src="${profile.empresa.logoClienteUrl}" class="logo client-logo" alt="${profile.empresa.nome}">` : ''}
               </div>
-            `).join('')}
+              <h1>Relatório de Segurança Digital</h1>
+              <h2>${profile.empresa.nome}</h2>
+              <p>Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7 • NIST Oriented • 23 anos de experiência</p>
+              <p style="margin-top: 10px; font-size: 0.9rem;">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
+            </div>
+            
+            <div class="section">
+              <h2>📊 Informações da Empresa</h2>
+              <div class="info-grid">
+                <div class="info-item"><strong>Nome:</strong> ${profile.empresa.nome}</div>
+                <div class="info-item"><strong>Setor:</strong> ${profile.empresa.setor}</div>
+                <div class="info-item"><strong>Usuários Atuais:</strong> ${profile.infraestrutura.usuariosAtuais}</div>
+                <div class="info-item"><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</div>
+                <div class="info-item"><strong>Time TI:</strong> ${profile.infraestrutura.timeTI}</div>
+                <div class="info-item"><strong>Contato:</strong> ${profile.infraestrutura.contatoNome} (${profile.infraestrutura.contatoCargo})</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2>🌐 Infraestrutura e Conectividade</h2>
+              <h3>Links de Internet</h3>
+              <div class="grid">
+                ${profile.infraestrutura.links.map(link => `
+                  <div class="card">
+                    <strong>Provedor:</strong> ${link.provedor}<br>
+                    <strong>Velocidade:</strong> ${link.velocidade}
+                    ${link.aumentoPretendido ? `<br><strong>Nova Velocidade:</strong> ${link.novaVelocidade}` : ''}
+                  </div>
+                `).join('')}
+              </div>
+              
+              <h3>WiFi e Rede</h3>
+              <div class="info-grid">
+                <div class="info-item"><strong>Tipo WiFi:</strong> ${profile.conectividade.wifiTipo === 'segmentada' ? 'Segmentada' : profile.conectividade.wifiTipo === 'unica' ? 'Única' : 'Não informado'}</div>
+                <div class="info-item"><strong>Quantidade APs:</strong> ${profile.conectividade.apsQuantidade}</div>
+                <div class="info-item"><strong>Marca AP:</strong> ${profile.conectividade.apMarca}</div>
+                <div class="info-item"><strong>Modelo AP:</strong> ${profile.conectividade.apModelo}</div>
+                <div class="info-item"><strong>Switch Gerenciável:</strong> ${profile.conectividade.switchGerenciavel ? 'Sim' : 'Não'}</div>
+                <div class="info-item"><strong>SaaS/IaaS:</strong> ${profile.conectividade.possuiSaasIaas ? profile.conectividade.servicoSaasIaas : 'Não possui'}</div>
+              </div>
+
+              <h3>VPN</h3>
+              <div class="info-grid">
+                <div class="info-item"><strong>Usa VPN:</strong> ${profile.conectividade.usaVPN ? 'Sim' : 'Não'}</div>
+                ${profile.conectividade.usaVPN ? `
+                  <div class="info-item"><strong>Acessos VPN:</strong> ${profile.conectividade.acessosVPNQuantidade}</div>
+                  <div class="info-item"><strong>Uso VPN:</strong> ${profile.conectividade.usoVPN}</div>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="section">
+              <h2>🛡️ Segurança Atual</h2>
+              <div class="grid">
+                <div class="card security-card">
+                  <h3>Firewall</h3>
+                  ${profile.seguranca.possuiFirewall ? `
+                    <p><strong>Tipo:</strong> ${profile.seguranca.firewallTipo}</p>
+                    <p><strong>Modelo:</strong> ${profile.seguranca.firewallModelo}</p>
+                    <p><strong>Status:</strong> ${profile.seguranca.firewallLocadoOuComprado}</p>
+                    <p><strong>Licença:</strong> <span class="${profile.seguranca.firewallLicencaAtiva ? 'status-active' : 'status-inactive'}">${profile.seguranca.firewallLicencaAtiva ? 'Ativa' : 'Inativa'}</span></p>
+                  ` : '<p class="status-inactive">Não possui firewall</p>'}
+                </div>
+
+                <div class="card security-card">
+                  <h3>Antivírus/Endpoint</h3>
+                  ${profile.seguranca.possuiAntivirusEndpoint ? `
+                    <p><strong>Tipo:</strong> ${profile.seguranca.antivirusTipo}</p>
+                    <p><strong>Categoria:</strong> ${profile.seguranca.antivirusCategoria}</p>
+                    <p><strong>Gerenciamento:</strong> <span class="${profile.seguranca.antivirusGerenciado ? 'status-active' : 'status-warning'}">${profile.seguranca.antivirusGerenciado ? 'Gerenciado' : 'Não Gerenciado'}</span></p>
+                  ` : '<p class="status-inactive">Não possui antivírus</p>'}
+                </div>
+
+                <div class="card security-card">
+                  <h3>Backup</h3>
+                  ${profile.backup.possuiBackup ? `
+                    <p><strong>Tipo:</strong> ${profile.backup.tipoBackup}</p>
+                    <p><strong>Gerenciável:</strong> <span class="${profile.backup.backupGerenciavel ? 'status-active' : 'status-warning'}">${profile.backup.backupGerenciavel ? 'Sim' : 'Não'}</span></p>
+                    <p><strong>Teste Restore:</strong> <span class="${profile.backup.fazTesteRestore ? 'status-active' : 'status-inactive'}">${profile.backup.fazTesteRestore ? 'Sim' : 'Não'}</span></p>
+                  ` : '<p class="status-inactive">Não possui backup</p>'}
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2>⚠️ Riscos Identificados</h2>
+              <div class="grid">
+                ${risks.map(risk => `
+                  <div class="card risk-card">
+                    <h3>${risk.titulo}</h3>
+                    <p><strong>Probabilidade:</strong> ${risk.probabilidade}%</p>
+                    <p><strong>Categoria:</strong> ${risk.categoria.toUpperCase()}</p>
+                    <p><strong>Explicação:</strong> ${risk.explicacao}</p>
+                    <p><strong>Fator Causador:</strong> ${risk.fatorCausador}</p>
+                    <p><strong>Mitigação Sugerida:</strong> ${risk.mitigacaoSugerida}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="section">
+              <h2>🎯 Objetivos de Segurança</h2>
+              <ul>
+                ${profile.objetivos.lgpd ? '<li>✅ Conformidade LGPD</li>' : '<li>❌ Conformidade LGPD</li>'}
+                ${profile.objetivos.vpnSegura ? '<li>✅ VPN Segura</li>' : '<li>❌ VPN Segura</li>'}
+                ${profile.objetivos.backupImutavel ? '<li>✅ Backup Imutável</li>' : '<li>❌ Backup Imutável</li>'}
+                ${profile.objetivos.gestaoIncidentes ? '<li>✅ Gestão de Incidentes</li>' : '<li>❌ Gestão de Incidentes</li>'}
+                ${profile.objetivos.reduzirRiscos ? '<li>✅ Reduzir Riscos Cibernéticos</li>' : '<li>❌ Reduzir Riscos Cibernéticos</li>'}
+                ${profile.objetivos.protecaoEndpoints ? '<li>✅ Proteção de Endpoints</li>' : '<li>❌ Proteção de Endpoints</li>'}
+                ${profile.objetivos.monitoramento247 ? '<li>✅ Monitoramento 24/7</li>' : '<li>❌ Monitoramento 24/7</li>'}
+                ${profile.objetivos.auditoriaCompliance ? '<li>✅ Auditoria e Compliance</li>' : '<li>❌ Auditoria e Compliance</li>'}
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>📝 Observações por Etapa</h2>
+              ${Object.entries(profile.observacoesPorEtapa).map(([etapa, observacao], index) => 
+                observacao ? `
+                  <div class="card">
+                    <h3>Etapa ${index + 1}</h3>
+                    <p>${observacao}</p>
+                  </div>
+                ` : ''
+              ).join('')}
+            </div>
+
+            <div class="footer">
+              <p><strong>Concierge Segurança Digital</strong></p>
+              <p>Grupo QOS TECNOLOGIA | ISO 27001 Certificada | SOC 24/7 | NIST Framework</p>
+              <p>23 anos protegendo empresas contra ameaças cibernéticas</p>
+              <p style="margin-top: 10px; font-size: 0.8rem;">
+                Este relatório foi gerado automaticamente baseado nas informações coletadas durante o processo de avaliação.
+              </p>
+            </div>
           </div>
         </body>
       </html>
@@ -83,11 +252,96 @@ export function Presentation() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `apresentacao-${profile.empresa.nome.replace(/\s+/g, '-').toLowerCase()}.html`;
+    a.download = `relatorio-seguranca-${profile.empresa.nome.replace(/\s+/g, '-').toLowerCase()}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const exportToPDF = async () => {
+    try {
+      // Create a temporary div with the same content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = `
+        <div style="padding: 20px; font-family: Arial, sans-serif; background: white; color: black;">
+          <div style="text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 2px solid #3B82F6;">
+            <h1 style="color: #3B82F6; margin-bottom: 10px;">Relatório de Segurança Digital</h1>
+            <h2 style="color: #1a2332; margin-bottom: 5px;">${profile.empresa.nome}</h2>
+            <p style="color: #666;">Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7</p>
+            <p style="font-size: 12px; color: #888;">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
+          </div>
+          
+          <div style="margin-bottom: 25px;">
+            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Informações da Empresa</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+              <div><strong>Nome:</strong> ${profile.empresa.nome}</div>
+              <div><strong>Setor:</strong> ${profile.empresa.setor}</div>
+              <div><strong>Usuários:</strong> ${profile.infraestrutura.usuariosAtuais}</div>
+              <div><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 25px;">
+            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Segurança Atual</h3>
+            <div style="margin-top: 15px;">
+              <p><strong>Firewall:</strong> ${profile.seguranca.possuiFirewall ? `${profile.seguranca.firewallTipo} - ${profile.seguranca.firewallModelo}` : 'Não possui'}</p>
+              <p><strong>Antivírus:</strong> ${profile.seguranca.possuiAntivirusEndpoint ? `${profile.seguranca.antivirusTipo} - ${profile.seguranca.antivirusCategoria}` : 'Não possui'}</p>
+              <p><strong>Backup:</strong> ${profile.backup.possuiBackup ? profile.backup.tipoBackup : 'Não possui'}</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 25px;">
+            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Riscos Identificados</h3>
+            ${risks.map(risk => `
+              <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #EF4444; background: #f9f9f9;">
+                <h4 style="color: #EF4444; margin-bottom: 5px;">${risk.titulo} (${risk.probabilidade}%)</h4>
+                <p style="margin-bottom: 5px; font-size: 14px;">${risk.explicacao}</p>
+                <p style="font-size: 14px;"><strong>Mitigação:</strong> ${risk.mitigacaoSugerida}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="margin-bottom: 25px;">
+            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Objetivos de Segurança</h3>
+            <ul style="margin-top: 15px;">
+              ${profile.objetivos.lgpd ? '<li>✅ Conformidade LGPD</li>' : '<li>❌ Conformidade LGPD</li>'}
+              ${profile.objetivos.vpnSegura ? '<li>✅ VPN Segura</li>' : '<li>❌ VPN Segura</li>'}
+              ${profile.objetivos.backupImutavel ? '<li>✅ Backup Imutável</li>' : '<li>❌ Backup Imutável</li>'}
+              ${profile.objetivos.gestaoIncidentes ? '<li>✅ Gestão de Incidentes</li>' : '<li>❌ Gestão de Incidentes</li>'}
+            </ul>
+          </div>
+        </div>
+      `;
+      
+      // Temporarily add to body
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
+      
+      // Generate canvas from the div
+      const canvas = await html2canvas(tempDiv.firstElementChild as HTMLElement, {
+        backgroundColor: '#ffffff',
+        scale: 2
+      });
+      
+      // Remove temporary div
+      document.body.removeChild(tempDiv);
+      
+      // Create PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`relatorio-seguranca-${profile.empresa.nome.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+      
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      alert('Erro ao gerar PDF. Tente novamente.');
+    }
   };
 
   return (
@@ -146,6 +400,14 @@ export function Presentation() {
             >
               <Download className="h-4 w-4" />
               Exportar HTML
+            </Button>
+            <Button
+              onClick={exportToPDF}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Exportar PDF
             </Button>
           </div>
         </div>

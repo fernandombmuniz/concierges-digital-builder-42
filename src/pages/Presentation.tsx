@@ -261,177 +261,174 @@ export function Presentation() {
 
   const exportToPDF = async () => {
     try {
-      // Create a temporary div with the complete content
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = `
-        <div style="padding: 30px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: white; color: black; max-width: 800px; margin: 0 auto;">
-          <div style="text-align: center; margin-bottom: 40px; padding: 30px; border: 2px solid #3B82F6; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 20px;">
-              <img src="/concierge-logo-new.png" style="height: 80px;" alt="Concierge" />
-              ${profile.empresa.logoClienteUrl ? `<img src="${profile.empresa.logoClienteUrl}" style="height: 80px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" alt="${profile.empresa.nome}" />` : ''}
-            </div>
-            <h1 style="color: #3B82F6; margin-bottom: 10px; font-size: 2rem; font-weight: bold;">Relatório de Segurança Digital</h1>
-            <h2 style="color: #1a2332; margin-bottom: 15px; font-size: 1.5rem;">${profile.empresa.nome}</h2>
-            <p style="color: #666; font-size: 1rem;">Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7 • NIST Oriented • 23 anos de experiência</p>
-            <p style="font-size: 14px; color: #888; margin-top: 10px;">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
-          </div>
-          
-          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">📊 Informações da Empresa</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Nome:</strong> ${profile.empresa.nome}</div>
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Setor:</strong> ${profile.empresa.setor}</div>
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Usuários Atuais:</strong> ${profile.infraestrutura.usuariosAtuais}</div>
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</div>
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Time TI:</strong> ${profile.infraestrutura.timeTI}</div>
-              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Contato:</strong> ${profile.infraestrutura.contatoNome} (${profile.infraestrutura.contatoCargo})</div>
-            </div>
-          </div>
+      // Create a complete PDF report using jsPDF directly
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+      let yPosition = margin;
 
-          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🌐 Infraestrutura e Conectividade</h3>
-            
-            <h4 style="color: #1a2332; margin: 15px 0 10px 0; font-size: 1.1rem;">Links de Internet</h4>
-            ${profile.infraestrutura.links.map(link => `
-              <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #3B82F6;">
-                <strong>Provedor:</strong> ${link.provedor}<br>
-                <strong>Velocidade:</strong> ${link.velocidade}
-                ${link.aumentoPretendido ? `<br><strong>Nova Velocidade:</strong> ${link.novaVelocidade}` : ''}
-              </div>
-            `).join('')}
-            
-            <h4 style="color: #1a2332; margin: 20px 0 10px 0; font-size: 1.1rem;">WiFi e Rede</h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Tipo WiFi:</strong> ${profile.conectividade.wifiTipo === 'segmentada' ? 'Segmentada' : profile.conectividade.wifiTipo === 'unica' ? 'Única' : 'Não informado'}</div>
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Quantidade APs:</strong> ${profile.conectividade.apsQuantidade}</div>
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Marca AP:</strong> ${profile.conectividade.apMarca}</div>
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Modelo AP:</strong> ${profile.conectividade.apModelo}</div>
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Switch Gerenciável:</strong> ${profile.conectividade.switchGerenciavel ? 'Sim' : 'Não'}</div>
-              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>SaaS/IaaS:</strong> ${profile.conectividade.possuiSaasIaas ? profile.conectividade.servicoSaasIaas : 'Não possui'}</div>
-            </div>
+      // Helper function to add text with wrapping
+      const addText = (text: string, fontSize: number = 12, isBold: boolean = false, color: string = '#000000') => {
+        if (yPosition > pageHeight - margin - 20) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        pdf.setFontSize(fontSize);
+        pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+        pdf.setTextColor(color);
+        
+        const lines = pdf.splitTextToSize(text, contentWidth);
+        pdf.text(lines, margin, yPosition);
+        yPosition += lines.length * (fontSize * 0.35) + 5;
+      };
 
-            ${profile.conectividade.usaVPN ? `
-              <h4 style="color: #1a2332; margin: 20px 0 10px 0; font-size: 1.1rem;">VPN</h4>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Acessos VPN:</strong> ${profile.conectividade.acessosVPNQuantidade}</div>
-                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Uso VPN:</strong> ${profile.conectividade.usoVPN}</div>
-              </div>
-            ` : ''}
-          </div>
-
-          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🛡️ Segurança Atual</h3>
-            <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
-                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Firewall</h4>
-                ${profile.seguranca.possuiFirewall ? `
-                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.seguranca.firewallTipo}</p>
-                  <p style="margin: 5px 0;"><strong>Modelo:</strong> ${profile.seguranca.firewallModelo}</p>
-                  <p style="margin: 5px 0;"><strong>Status:</strong> ${profile.seguranca.firewallLocadoOuComprado}</p>
-                  <p style="margin: 5px 0;"><strong>Licença:</strong> <span style="color: ${profile.seguranca.firewallLicencaAtiva ? '#10B981' : '#EF4444'}; font-weight: bold;">${profile.seguranca.firewallLicencaAtiva ? 'Ativa' : 'Inativa'}</span></p>
-                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui firewall</p>'}
-              </div>
-
-              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
-                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Antivírus/Endpoint</h4>
-                ${profile.seguranca.possuiAntivirusEndpoint ? `
-                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.seguranca.antivirusTipo}</p>
-                  <p style="margin: 5px 0;"><strong>Categoria:</strong> ${profile.seguranca.antivirusCategoria}</p>
-                  <p style="margin: 5px 0;"><strong>Gerenciamento:</strong> <span style="color: ${profile.seguranca.antivirusGerenciado ? '#10B981' : '#F59E0B'}; font-weight: bold;">${profile.seguranca.antivirusGerenciado ? 'Gerenciado' : 'Não Gerenciado'}</span></p>
-                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui antivírus</p>'}
-              </div>
-
-              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
-                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Backup</h4>
-                ${profile.backup.possuiBackup ? `
-                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.backup.tipoBackup}</p>
-                  <p style="margin: 5px 0;"><strong>Gerenciável:</strong> <span style="color: ${profile.backup.backupGerenciavel ? '#10B981' : '#F59E0B'}; font-weight: bold;">${profile.backup.backupGerenciavel ? 'Sim' : 'Não'}</span></p>
-                  <p style="margin: 5px 0;"><strong>Teste Restore:</strong> <span style="color: ${profile.backup.fazTesteRestore ? '#10B981' : '#EF4444'}; font-weight: bold;">${profile.backup.fazTesteRestore ? 'Sim' : 'Não'}</span></p>
-                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui backup</p>'}
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">⚠️ Riscos Identificados</h3>
-            ${risks.map(risk => `
-              <div style="margin: 15px 0; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #EF4444; background: white;">
-                <h4 style="color: #EF4444; margin-bottom: 10px; font-size: 1.1rem;">${risk.titulo}</h4>
-                <p style="margin: 8px 0; font-size: 14px;"><strong>Probabilidade:</strong> ${risk.probabilidade}%</p>
-                <p style="margin: 8px 0; font-size: 14px;"><strong>Categoria:</strong> ${risk.categoria.toUpperCase()}</p>
-                <p style="margin: 8px 0; font-size: 14px;"><strong>Explicação:</strong> ${risk.explicacao}</p>
-                <p style="margin: 8px 0; font-size: 14px;"><strong>Fator Causador:</strong> ${risk.fatorCausador}</p>
-                <p style="margin: 8px 0; font-size: 14px;"><strong>Mitigação Sugerida:</strong> ${risk.mitigacaoSugerida}</p>
-              </div>
-            `).join('')}
-          </div>
-
-          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🎯 Objetivos de Segurança</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.lgpd ? '✅' : '❌'} Conformidade LGPD</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.vpnSegura ? '✅' : '❌'} VPN Segura</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.backupImutavel ? '✅' : '❌'} Backup Imutável</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.gestaoIncidentes ? '✅' : '❌'} Gestão de Incidentes</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.reduzirRiscos ? '✅' : '❌'} Reduzir Riscos Cibernéticos</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.protecaoEndpoints ? '✅' : '❌'} Proteção de Endpoints</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.monitoramento247 ? '✅' : '❌'} Monitoramento 24/7</div>
-              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.auditoriaCompliance ? '✅' : '❌'} Auditoria e Compliance</div>
-            </div>
-          </div>
-
-          ${Object.values(profile.observacoesPorEtapa).some(nota => nota.trim() !== '') ? `
-            <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
-              <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">📝 Notas Internas</h3>
-              ${[
-                { nome: 'Informações da Empresa', nota: profile.observacoesPorEtapa.etapa1 },
-                { nome: 'Infraestrutura', nota: profile.observacoesPorEtapa.etapa2 },
-                { nome: 'Conectividade', nota: profile.observacoesPorEtapa.etapa3 },
-                { nome: 'Segurança', nota: profile.observacoesPorEtapa.etapa4 },
-                { nome: 'Backup', nota: profile.observacoesPorEtapa.etapa5 },
-                { nome: 'Objetivos', nota: profile.observacoesPorEtapa.etapa6 }
-              ].filter(etapa => etapa.nota.trim() !== '').map(etapa => `
-                <div style="margin: 15px 0; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #3B82F6;">
-                  <h4 style="color: #3B82F6; margin-bottom: 10px; font-size: 1rem;">${etapa.nome}</h4>
-                  <p style="font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${etapa.nota}</p>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-
-          <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f1f5f9; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <p style="font-weight: bold; font-size: 1.1rem; color: #1a2332;">Concierge Segurança Digital</p>
-            <p style="color: #666; margin: 5px 0;">Grupo QOS TECNOLOGIA | ISO 27001 Certificada | SOC 24/7 | NIST Framework</p>
-            <p style="color: #666; margin: 5px 0;">23 anos protegendo empresas contra ameaças cibernéticas</p>
-            <p style="margin-top: 15px; font-size: 12px; color: #888;">
-              Este relatório foi gerado automaticamente baseado nas informações coletadas durante o processo de avaliação.
-            </p>
-          </div>
-        </div>
-      `;
+      // Header with logos and title
+      yPosition = margin + 10;
       
-      // Temporarily add to body
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      document.body.appendChild(tempDiv);
+      // Title
+      addText('Relatório de Segurança Digital', 20, true, '#3B82F6');
+      addText(profile.empresa.nome, 16, true, '#1a2332');
+      addText('Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7 • NIST Oriented • 23 anos de experiência', 10, false, '#666666');
+      addText(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 9, false, '#888888');
+      yPosition += 10;
+
+      // Company Information
+      addText('📊 INFORMAÇÕES DA EMPRESA', 14, true, '#3B82F6');
+      addText(`Nome: ${profile.empresa.nome}`, 10);
+      addText(`Setor: ${profile.empresa.setor}`, 10);
+      addText(`Usuários Atuais: ${profile.infraestrutura.usuariosAtuais}`, 10);
+      addText(`Dispositivos: ${profile.infraestrutura.dispositivosAtuais}`, 10);
+      addText(`Time TI: ${profile.infraestrutura.timeTI}`, 10);
+      addText(`Contato: ${profile.infraestrutura.contatoNome} (${profile.infraestrutura.contatoCargo})`, 10);
+      yPosition += 10;
+
+      // Infrastructure and Connectivity
+      addText('🌐 INFRAESTRUTURA E CONECTIVIDADE', 14, true, '#3B82F6');
       
-      // Generate canvas from the div
-      const canvas = await html2canvas(tempDiv.firstElementChild as HTMLElement, {
-        backgroundColor: '#ffffff',
-        scale: 2
+      addText('Links de Internet:', 12, true);
+      profile.infraestrutura.links.forEach((link, index) => {
+        addText(`${index + 1}. Provedor: ${link.provedor}`, 10);
+        addText(`   Velocidade: ${link.velocidade}`, 10);
+        if (link.aumentoPretendido && link.novaVelocidade) {
+          addText(`   Nova Velocidade Pretendida: ${link.novaVelocidade}`, 10);
+        }
       });
       
-      // Remove temporary div
-      document.body.removeChild(tempDiv);
+      addText('WiFi e Rede:', 12, true);
+      addText(`Tipo WiFi: ${profile.conectividade.wifiTipo === 'segmentada' ? 'Segmentada' : profile.conectividade.wifiTipo === 'unica' ? 'Única' : 'Não informado'}`, 10);
+      addText(`Quantidade APs: ${profile.conectividade.apsQuantidade}`, 10);
+      addText(`Marca AP: ${profile.conectividade.apMarca}`, 10);
+      addText(`Modelo AP: ${profile.conectividade.apModelo}`, 10);
+      addText(`Switch Gerenciável: ${profile.conectividade.switchGerenciavel ? 'Sim' : 'Não'}`, 10);
+      addText(`SaaS/IaaS: ${profile.conectividade.possuiSaasIaas ? profile.conectividade.servicoSaasIaas : 'Não possui'}`, 10);
+
+      if (profile.conectividade.usaVPN) {
+        addText('VPN:', 12, true);
+        addText(`Acessos VPN: ${profile.conectividade.acessosVPNQuantidade}`, 10);
+        addText(`Uso VPN: ${profile.conectividade.usoVPN}`, 10);
+      }
+      yPosition += 10;
+
+      // Security
+      addText('🛡️ SEGURANÇA ATUAL', 14, true, '#3B82F6');
       
-      // Create PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/png');
+      addText('Firewall:', 12, true, '#10B981');
+      if (profile.seguranca.possuiFirewall) {
+        addText(`Tipo: ${profile.seguranca.firewallTipo}`, 10);
+        addText(`Modelo: ${profile.seguranca.firewallModelo}`, 10);
+        addText(`Status: ${profile.seguranca.firewallLocadoOuComprado}`, 10);
+        addText(`Licença: ${profile.seguranca.firewallLicencaAtiva ? 'Ativa' : 'Inativa'}`, 10, false, profile.seguranca.firewallLicencaAtiva ? '#10B981' : '#EF4444');
+      } else {
+        addText('Não possui firewall', 10, false, '#EF4444');
+      }
+
+      addText('Antivírus/Endpoint:', 12, true, '#10B981');
+      if (profile.seguranca.possuiAntivirusEndpoint) {
+        addText(`Tipo: ${profile.seguranca.antivirusTipo}`, 10);
+        addText(`Categoria: ${profile.seguranca.antivirusCategoria}`, 10);
+        addText(`Gerenciamento: ${profile.seguranca.antivirusGerenciado ? 'Gerenciado' : 'Não Gerenciado'}`, 10, false, profile.seguranca.antivirusGerenciado ? '#10B981' : '#F59E0B');
+      } else {
+        addText('Não possui antivírus', 10, false, '#EF4444');
+      }
+
+      addText('Backup:', 12, true, '#10B981');
+      if (profile.backup.possuiBackup) {
+        addText(`Tipo: ${profile.backup.tipoBackup}`, 10);
+        addText(`Gerenciável: ${profile.backup.backupGerenciavel ? 'Sim' : 'Não'}`, 10, false, profile.backup.backupGerenciavel ? '#10B981' : '#F59E0B');
+        addText(`Teste Restore: ${profile.backup.fazTesteRestore ? 'Sim' : 'Não'}`, 10, false, profile.backup.fazTesteRestore ? '#10B981' : '#EF4444');
+      } else {
+        addText('Não possui backup', 10, false, '#EF4444');
+      }
+      yPosition += 10;
+
+      // Risks
+      addText('⚠️ RISCOS IDENTIFICADOS', 14, true, '#3B82F6');
+      risks.forEach((risk, index) => {
+        addText(`${index + 1}. ${risk.titulo}`, 12, true, '#EF4444');
+        addText(`Probabilidade: ${risk.probabilidade}%`, 10);
+        addText(`Categoria: ${risk.categoria.toUpperCase()}`, 10);
+        addText(`Explicação: ${risk.explicacao}`, 10);
+        addText(`Fator Causador: ${risk.fatorCausador}`, 10);
+        addText(`Mitigação Sugerida: ${risk.mitigacaoSugerida}`, 10);
+        yPosition += 5;
+      });
+      yPosition += 10;
+
+      // Objectives
+      addText('🎯 OBJETIVOS DE SEGURANÇA', 14, true, '#3B82F6');
+      const objetivos = [
+        { key: 'lgpd', label: 'Conformidade LGPD' },
+        { key: 'vpnSegura', label: 'VPN Segura' },
+        { key: 'backupImutavel', label: 'Backup Imutável' },
+        { key: 'gestaoIncidentes', label: 'Gestão de Incidentes' },
+        { key: 'reduzirRiscos', label: 'Reduzir Riscos Cibernéticos' },
+        { key: 'protecaoEndpoints', label: 'Proteção de Endpoints' },
+        { key: 'monitoramento247', label: 'Monitoramento 24/7' },
+        { key: 'auditoriaCompliance', label: 'Auditoria e Compliance' }
+      ];
       
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      objetivos.forEach(obj => {
+        const status = (profile.objetivos as any)[obj.key] ? '✅' : '❌';
+        addText(`${status} ${obj.label}`, 10);
+      });
+      yPosition += 10;
+
+      // Internal Notes
+      const hasNotes = Object.values(profile.observacoesPorEtapa).some(nota => nota.trim() !== '');
+      if (hasNotes) {
+        addText('📝 NOTAS INTERNAS', 14, true, '#3B82F6');
+        
+        const etapas = [
+          { nome: 'Informações da Empresa', nota: profile.observacoesPorEtapa.etapa1 },
+          { nome: 'Infraestrutura', nota: profile.observacoesPorEtapa.etapa2 },
+          { nome: 'Conectividade', nota: profile.observacoesPorEtapa.etapa3 },
+          { nome: 'Segurança', nota: profile.observacoesPorEtapa.etapa4 },
+          { nome: 'Backup', nota: profile.observacoesPorEtapa.etapa5 },
+          { nome: 'Objetivos', nota: profile.observacoesPorEtapa.etapa6 }
+        ];
+
+        etapas.filter(etapa => etapa.nota.trim() !== '').forEach(etapa => {
+          addText(`${etapa.nome}:`, 12, true, '#3B82F6');
+          addText(etapa.nota, 10);
+          yPosition += 5;
+        });
+      }
+
+      // Footer
+      if (yPosition > pageHeight - 60) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+      yPosition = pageHeight - 40;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      addText('Concierge Segurança Digital', 12, true, '#1a2332');
+      addText('Grupo QOS TECNOLOGIA | ISO 27001 Certificada | SOC 24/7 | NIST Framework', 10, false, '#666666');
+      addText('23 anos protegendo empresas contra ameaças cibernéticas', 10, false, '#666666');
+      addText('Este relatório foi gerado automaticamente baseado nas informações coletadas durante o processo de avaliação.', 8, false, '#888888');
+
       pdf.save(`relatorio-seguranca-${profile.empresa.nome.replace(/\s+/g, '-').toLowerCase()}.pdf`);
       
     } catch (error) {

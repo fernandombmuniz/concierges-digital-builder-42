@@ -261,55 +261,151 @@ export function Presentation() {
 
   const exportToPDF = async () => {
     try {
-      // Create a temporary div with the same content
+      // Create a temporary div with the complete content
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; background: white; color: black;">
-          <div style="text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 2px solid #3B82F6;">
-            <h1 style="color: #3B82F6; margin-bottom: 10px;">Relatório de Segurança Digital</h1>
-            <h2 style="color: #1a2332; margin-bottom: 5px;">${profile.empresa.nome}</h2>
-            <p style="color: #666;">Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7</p>
-            <p style="font-size: 12px; color: #888;">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
+        <div style="padding: 30px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: white; color: black; max-width: 800px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 40px; padding: 30px; border: 2px solid #3B82F6; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 20px;">
+              <img src="/concierge-logo-new.png" style="height: 80px;" alt="Concierge" />
+              ${profile.empresa.logoClienteUrl ? `<img src="${profile.empresa.logoClienteUrl}" style="height: 80px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" alt="${profile.empresa.nome}" />` : ''}
+            </div>
+            <h1 style="color: #3B82F6; margin-bottom: 10px; font-size: 2rem; font-weight: bold;">Relatório de Segurança Digital</h1>
+            <h2 style="color: #1a2332; margin-bottom: 15px; font-size: 1.5rem;">${profile.empresa.nome}</h2>
+            <p style="color: #666; font-size: 1rem;">Grupo QOS TECNOLOGIA • ISO 27001 • SOC 24/7 • NIST Oriented • 23 anos de experiência</p>
+            <p style="font-size: 14px; color: #888; margin-top: 10px;">Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
           </div>
           
-          <div style="margin-bottom: 25px;">
-            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Informações da Empresa</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-              <div><strong>Nome:</strong> ${profile.empresa.nome}</div>
-              <div><strong>Setor:</strong> ${profile.empresa.setor}</div>
-              <div><strong>Usuários:</strong> ${profile.infraestrutura.usuariosAtuais}</div>
-              <div><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</div>
+          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">📊 Informações da Empresa</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Nome:</strong> ${profile.empresa.nome}</div>
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Setor:</strong> ${profile.empresa.setor}</div>
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Usuários Atuais:</strong> ${profile.infraestrutura.usuariosAtuais}</div>
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Dispositivos:</strong> ${profile.infraestrutura.dispositivosAtuais}</div>
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Time TI:</strong> ${profile.infraestrutura.timeTI}</div>
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;"><strong>Contato:</strong> ${profile.infraestrutura.contatoNome} (${profile.infraestrutura.contatoCargo})</div>
             </div>
           </div>
 
-          <div style="margin-bottom: 25px;">
-            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Segurança Atual</h3>
-            <div style="margin-top: 15px;">
-              <p><strong>Firewall:</strong> ${profile.seguranca.possuiFirewall ? `${profile.seguranca.firewallTipo} - ${profile.seguranca.firewallModelo}` : 'Não possui'}</p>
-              <p><strong>Antivírus:</strong> ${profile.seguranca.possuiAntivirusEndpoint ? `${profile.seguranca.antivirusTipo} - ${profile.seguranca.antivirusCategoria}` : 'Não possui'}</p>
-              <p><strong>Backup:</strong> ${profile.backup.possuiBackup ? profile.backup.tipoBackup : 'Não possui'}</p>
+          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🌐 Infraestrutura e Conectividade</h3>
+            
+            <h4 style="color: #1a2332; margin: 15px 0 10px 0; font-size: 1.1rem;">Links de Internet</h4>
+            ${profile.infraestrutura.links.map(link => `
+              <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #3B82F6;">
+                <strong>Provedor:</strong> ${link.provedor}<br>
+                <strong>Velocidade:</strong> ${link.velocidade}
+                ${link.aumentoPretendido ? `<br><strong>Nova Velocidade:</strong> ${link.novaVelocidade}` : ''}
+              </div>
+            `).join('')}
+            
+            <h4 style="color: #1a2332; margin: 20px 0 10px 0; font-size: 1.1rem;">WiFi e Rede</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Tipo WiFi:</strong> ${profile.conectividade.wifiTipo === 'segmentada' ? 'Segmentada' : profile.conectividade.wifiTipo === 'unica' ? 'Única' : 'Não informado'}</div>
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Quantidade APs:</strong> ${profile.conectividade.apsQuantidade}</div>
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Marca AP:</strong> ${profile.conectividade.apMarca}</div>
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Modelo AP:</strong> ${profile.conectividade.apModelo}</div>
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Switch Gerenciável:</strong> ${profile.conectividade.switchGerenciavel ? 'Sim' : 'Não'}</div>
+              <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>SaaS/IaaS:</strong> ${profile.conectividade.possuiSaasIaas ? profile.conectividade.servicoSaasIaas : 'Não possui'}</div>
+            </div>
+
+            ${profile.conectividade.usaVPN ? `
+              <h4 style="color: #1a2332; margin: 20px 0 10px 0; font-size: 1.1rem;">VPN</h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Acessos VPN:</strong> ${profile.conectividade.acessosVPNQuantidade}</div>
+                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;"><strong>Uso VPN:</strong> ${profile.conectividade.usoVPN}</div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🛡️ Segurança Atual</h3>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
+                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Firewall</h4>
+                ${profile.seguranca.possuiFirewall ? `
+                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.seguranca.firewallTipo}</p>
+                  <p style="margin: 5px 0;"><strong>Modelo:</strong> ${profile.seguranca.firewallModelo}</p>
+                  <p style="margin: 5px 0;"><strong>Status:</strong> ${profile.seguranca.firewallLocadoOuComprado}</p>
+                  <p style="margin: 5px 0;"><strong>Licença:</strong> <span style="color: ${profile.seguranca.firewallLicencaAtiva ? '#10B981' : '#EF4444'}; font-weight: bold;">${profile.seguranca.firewallLicencaAtiva ? 'Ativa' : 'Inativa'}</span></p>
+                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui firewall</p>'}
+              </div>
+
+              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
+                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Antivírus/Endpoint</h4>
+                ${profile.seguranca.possuiAntivirusEndpoint ? `
+                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.seguranca.antivirusTipo}</p>
+                  <p style="margin: 5px 0;"><strong>Categoria:</strong> ${profile.seguranca.antivirusCategoria}</p>
+                  <p style="margin: 5px 0;"><strong>Gerenciamento:</strong> <span style="color: ${profile.seguranca.antivirusGerenciado ? '#10B981' : '#F59E0B'}; font-weight: bold;">${profile.seguranca.antivirusGerenciado ? 'Gerenciado' : 'Não Gerenciado'}</span></p>
+                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui antivírus</p>'}
+              </div>
+
+              <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #10B981;">
+                <h4 style="color: #10B981; margin-bottom: 10px; font-size: 1.1rem;">Backup</h4>
+                ${profile.backup.possuiBackup ? `
+                  <p style="margin: 5px 0;"><strong>Tipo:</strong> ${profile.backup.tipoBackup}</p>
+                  <p style="margin: 5px 0;"><strong>Gerenciável:</strong> <span style="color: ${profile.backup.backupGerenciavel ? '#10B981' : '#F59E0B'}; font-weight: bold;">${profile.backup.backupGerenciavel ? 'Sim' : 'Não'}</span></p>
+                  <p style="margin: 5px 0;"><strong>Teste Restore:</strong> <span style="color: ${profile.backup.fazTesteRestore ? '#10B981' : '#EF4444'}; font-weight: bold;">${profile.backup.fazTesteRestore ? 'Sim' : 'Não'}</span></p>
+                ` : '<p style="color: #EF4444; font-weight: bold;">Não possui backup</p>'}
+              </div>
             </div>
           </div>
 
-          <div style="margin-bottom: 25px;">
-            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Riscos Identificados</h3>
+          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">⚠️ Riscos Identificados</h3>
             ${risks.map(risk => `
-              <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #EF4444; background: #f9f9f9;">
-                <h4 style="color: #EF4444; margin-bottom: 5px;">${risk.titulo} (${risk.probabilidade}%)</h4>
-                <p style="margin-bottom: 5px; font-size: 14px;">${risk.explicacao}</p>
-                <p style="font-size: 14px;"><strong>Mitigação:</strong> ${risk.mitigacaoSugerida}</p>
+              <div style="margin: 15px 0; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #EF4444; background: white;">
+                <h4 style="color: #EF4444; margin-bottom: 10px; font-size: 1.1rem;">${risk.titulo}</h4>
+                <p style="margin: 8px 0; font-size: 14px;"><strong>Probabilidade:</strong> ${risk.probabilidade}%</p>
+                <p style="margin: 8px 0; font-size: 14px;"><strong>Categoria:</strong> ${risk.categoria.toUpperCase()}</p>
+                <p style="margin: 8px 0; font-size: 14px;"><strong>Explicação:</strong> ${risk.explicacao}</p>
+                <p style="margin: 8px 0; font-size: 14px;"><strong>Fator Causador:</strong> ${risk.fatorCausador}</p>
+                <p style="margin: 8px 0; font-size: 14px;"><strong>Mitigação Sugerida:</strong> ${risk.mitigacaoSugerida}</p>
               </div>
             `).join('')}
           </div>
 
-          <div style="margin-bottom: 25px;">
-            <h3 style="color: #3B82F6; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Objetivos de Segurança</h3>
-            <ul style="margin-top: 15px;">
-              ${profile.objetivos.lgpd ? '<li>✅ Conformidade LGPD</li>' : '<li>❌ Conformidade LGPD</li>'}
-              ${profile.objetivos.vpnSegura ? '<li>✅ VPN Segura</li>' : '<li>❌ VPN Segura</li>'}
-              ${profile.objetivos.backupImutavel ? '<li>✅ Backup Imutável</li>' : '<li>❌ Backup Imutável</li>'}
-              ${profile.objetivos.gestaoIncidentes ? '<li>✅ Gestão de Incidentes</li>' : '<li>❌ Gestão de Incidentes</li>'}
-            </ul>
+          <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+            <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">🎯 Objetivos de Segurança</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.lgpd ? '✅' : '❌'} Conformidade LGPD</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.vpnSegura ? '✅' : '❌'} VPN Segura</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.backupImutavel ? '✅' : '❌'} Backup Imutável</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.gestaoIncidentes ? '✅' : '❌'} Gestão de Incidentes</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.reduzirRiscos ? '✅' : '❌'} Reduzir Riscos Cibernéticos</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.protecaoEndpoints ? '✅' : '❌'} Proteção de Endpoints</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.monitoramento247 ? '✅' : '❌'} Monitoramento 24/7</div>
+              <div style="padding: 10px; font-size: 14px;">${profile.objetivos.auditoriaCompliance ? '✅' : '❌'} Auditoria e Compliance</div>
+            </div>
+          </div>
+
+          ${Object.values(profile.observacoesPorEtapa).some(nota => nota.trim() !== '') ? `
+            <div style="margin-bottom: 30px; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;">
+              <h3 style="color: #3B82F6; margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid #3B82F6; padding-bottom: 8px;">📝 Notas Internas</h3>
+              ${[
+                { nome: 'Informações da Empresa', nota: profile.observacoesPorEtapa.etapa1 },
+                { nome: 'Infraestrutura', nota: profile.observacoesPorEtapa.etapa2 },
+                { nome: 'Conectividade', nota: profile.observacoesPorEtapa.etapa3 },
+                { nome: 'Segurança', nota: profile.observacoesPorEtapa.etapa4 },
+                { nome: 'Backup', nota: profile.observacoesPorEtapa.etapa5 },
+                { nome: 'Objetivos', nota: profile.observacoesPorEtapa.etapa6 }
+              ].filter(etapa => etapa.nota.trim() !== '').map(etapa => `
+                <div style="margin: 15px 0; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 4px solid #3B82F6;">
+                  <h4 style="color: #3B82F6; margin-bottom: 10px; font-size: 1rem;">${etapa.nome}</h4>
+                  <p style="font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${etapa.nota}</p>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f1f5f9; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <p style="font-weight: bold; font-size: 1.1rem; color: #1a2332;">Concierge Segurança Digital</p>
+            <p style="color: #666; margin: 5px 0;">Grupo QOS TECNOLOGIA | ISO 27001 Certificada | SOC 24/7 | NIST Framework</p>
+            <p style="color: #666; margin: 5px 0;">23 anos protegendo empresas contra ameaças cibernéticas</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #888;">
+              Este relatório foi gerado automaticamente baseado nas informações coletadas durante o processo de avaliação.
+            </p>
           </div>
         </div>
       `;

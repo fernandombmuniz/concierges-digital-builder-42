@@ -38,12 +38,10 @@ const parseSpeed = (speedStr: string): number => {
 };
 
 export const suggestFirewall = (profile: Profile): string => {
-  // Calculate total users
-  const currentUsers = profile.infraestrutura.usuariosAtuais;
-  const estimatedGrowth = profile.infraestrutura.usuariosPretensao 
-    ? (profile.infraestrutura.usuariosEstimativa || 0) 
-    : 0;
-  const totalUsers = currentUsers + estimatedGrowth;
+  // Calculate total users - use estimated users if user plans to increase
+  const totalUsers = profile.infraestrutura.usuariosPretensao 
+    ? (profile.infraestrutura.usuariosEstimativa || profile.infraestrutura.usuariosAtuais)
+    : profile.infraestrutura.usuariosAtuais;
 
   // Calculate total throughput from all links
   const totalThroughput = profile.infraestrutura.links.reduce((total, link) => {

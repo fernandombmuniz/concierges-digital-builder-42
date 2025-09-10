@@ -671,30 +671,43 @@ export function Presentation() {
         </CyberCard>
 
         {/* ROI e Impacto Financeiro */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <CyberCard className="p-6 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+            <FileText className="h-6 w-6" />
+            ROI e Impacto Financeiro
+          </h2>
           <SimplifiedROICalculator />
-          <div className="space-y-6">
+        </CyberCard>
+
+        {/* Simulação Concierge */}
+        <CyberCard className="p-6">
+          <h2 className="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+            <Shield className="h-6 w-6" />
+            Simulação Concierge
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-6">
             <SimplifiedProposal />
+            
             {profile.equipamentoSugerido && (
-              <CyberCard className="p-6">
-                <h3 className="text-xl font-semibold mb-4 text-primary">
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-primary">
                   🛡️ Equipamento Sugerido
                 </h3>
-                <div className="space-y-3">
-                  <div className="p-4 bg-secondary/20 rounded-lg border border-border">
-                    <p className="text-lg font-medium text-foreground">
-                      <span className="text-primary">Firewall Recomendado:</span> {profile.equipamentoSugerido}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Baseado em {profile.infraestrutura.usuariosAtuais + (profile.infraestrutura.usuariosPretensao ? (profile.infraestrutura.usuariosEstimativa || 0) : 0)} usuários 
-                      e perfil de uso {profile.infraestrutura.perfilUso}
-                    </p>
-                  </div>
+                  <p className="text-lg font-medium text-foreground">
+                    <span className="text-primary">Firewall Recomendado:</span> {profile.equipamentoSugerido}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Baseado em {profile.infraestrutura.usuariosPretensao 
+                      ? `${profile.infraestrutura.usuariosEstimativa} usuários estimados` 
+                      : `${profile.infraestrutura.usuariosAtuais} usuários atuais`} 
+                    e perfil de uso {profile.infraestrutura.perfilUso}
+                  </p>
                 </div>
-              </CyberCard>
+              </div>
             )}
           </div>
-        </div>
+        </CyberCard>
 
         {/* Diferenciais QOS */}
         <CyberCard className="p-8 mb-6">

@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Profile, OnboardingStep } from '@/types/profile';
+import { suggestFirewall } from '@/utils/firewallSuggestion';
 
 interface ProfileContextType {
   profile: Profile;
@@ -25,7 +26,8 @@ const initialProfile: Profile = {
     links: [],
     timeTI: 0,
     contatoNome: '',
-    contatoCargo: ''
+    contatoCargo: '',
+    perfilUso: ''
   },
   conectividade: {
     wifiTipo: '',
@@ -93,6 +95,24 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     setProfile(initialProfile);
     setCurrentStep('empresa');
   };
+
+  // Update equipment suggestion whenever relevant profile data changes
+  useEffect(() => {
+    if (profile.infraestrutura.usuariosAtuais > 0 && 
+        profile.infraestrutura.links.length > 0 && 
+        profile.infraestrutura.perfilUso) {
+      const suggestion = suggestFirewall(profile);
+      if (suggestion !== profile.equipamentoSugerido) {
+        setProfile(prev => ({ ...prev, equipamentoSugerido: suggestion }));
+      }
+    }
+  }, [
+    profile.infraestrutura.usuariosAtuais,
+    profile.infraestrutura.usuariosPretensao,
+    profile.infraestrutura.usuariosEstimativa,
+    profile.infraestrutura.links,
+    profile.infraestrutura.perfilUso
+  ]);
 
   return (
     <ProfileContext.Provider value={{

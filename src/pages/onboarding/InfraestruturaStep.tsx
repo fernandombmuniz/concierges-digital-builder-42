@@ -10,6 +10,7 @@ import { ProgressBar } from '@/components/ProgressBar';
 import { useProfile } from '@/contexts/ProfileContext';
 import { LinkInfo } from '@/types/profile';
 import { Plus, X } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function InfraestruturaStep() {
   const { profile, updateProfile, setCurrentStep } = useProfile();
@@ -24,6 +25,7 @@ export function InfraestruturaStep() {
     timeTI: profile.infraestrutura.timeTI || 0,
     contatoNome: profile.infraestrutura.contatoNome,
     contatoCargo: profile.infraestrutura.contatoCargo,
+    perfilUso: profile.infraestrutura.perfilUso,
     observacoes: profile.observacoesPorEtapa.etapa2
   });
 
@@ -62,7 +64,8 @@ export function InfraestruturaStep() {
         links: formData.links.filter(link => link.provedor.trim() && link.velocidade.trim()),
         timeTI: formData.timeTI,
         contatoNome: formData.contatoNome,
-        contatoCargo: formData.contatoCargo
+        contatoCargo: formData.contatoCargo,
+        perfilUso: formData.perfilUso
       },
       observacoesPorEtapa: {
         ...profile.observacoesPorEtapa,
@@ -240,16 +243,34 @@ export function InfraestruturaStep() {
               ))}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="time-ti">Pessoas no Time de TI</Label>
-              <Input
-                id="time-ti"
-                type="number"
-                min="0"
-                value={formData.timeTI}
-                onChange={(e) => setFormData(prev => ({ ...prev, timeTI: parseInt(e.target.value) || 0 }))}
-                className="bg-input border-border"
-              />
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="time-ti">Pessoas no Time de TI</Label>
+                <Input
+                  id="time-ti"
+                  type="number"
+                  min="0"
+                  value={formData.timeTI}
+                  onChange={(e) => setFormData(prev => ({ ...prev, timeTI: parseInt(e.target.value) || 0 }))}
+                  className="bg-input border-border"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="perfil-uso">Perfil de Uso da Rede</Label>
+                <Select 
+                  value={formData.perfilUso} 
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, perfilUso: value as 'baixo' | 'medio' | 'alto' | '' }))}
+                >
+                  <SelectTrigger className="bg-input border-border">
+                    <SelectValue placeholder="Selecione o perfil de uso" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="baixo">Baixo</SelectItem>
+                    <SelectItem value="medio">Médio</SelectItem>
+                    <SelectItem value="alto">Alto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">

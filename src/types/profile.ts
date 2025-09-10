@@ -22,6 +22,7 @@ export interface InfraestruturaInfo {
   timeTI: number;
   contatoNome: string;
   contatoCargo: string;
+  perfilUso: 'baixo' | 'medio' | 'alto' | '';
 }
 
 export interface ConectividadeInfo {
@@ -84,6 +85,7 @@ export interface Profile {
   backup: BackupInfo;
   objetivos: ObjetivosInfo;
   observacoesPorEtapa: ObservacoesPorEtapa;
+  equipamentoSugerido?: string;
 }
 
 export interface RiskItem {

@@ -671,10 +671,30 @@ export function Presentation() {
         </CyberCard>
 
         {/* ROI e Impacto Financeiro */}
-        <SimplifiedROICalculator />
-
-        {/* Simulação de Proposta */}
-        <SimplifiedProposal />
+        <div className="grid md:grid-cols-2 gap-6">
+          <SimplifiedROICalculator />
+          <div className="space-y-6">
+            <SimplifiedProposal />
+            {profile.equipamentoSugerido && (
+              <CyberCard className="p-6">
+                <h3 className="text-xl font-semibold mb-4 text-primary">
+                  🛡️ Equipamento Sugerido
+                </h3>
+                <div className="space-y-3">
+                  <div className="p-4 bg-secondary/20 rounded-lg border border-border">
+                    <p className="text-lg font-medium text-foreground">
+                      <span className="text-primary">Firewall Recomendado:</span> {profile.equipamentoSugerido}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Baseado em {profile.infraestrutura.usuariosAtuais + (profile.infraestrutura.usuariosPretensao ? (profile.infraestrutura.usuariosEstimativa || 0) : 0)} usuários 
+                      e perfil de uso {profile.infraestrutura.perfilUso}
+                    </p>
+                  </div>
+                </div>
+              </CyberCard>
+            )}
+          </div>
+        </div>
 
         {/* Diferenciais QOS */}
         <CyberCard className="p-8 mb-6">

@@ -19,44 +19,7 @@ export function SimplifiedProposal() {
   };
 
   return (
-    <CyberCard className="p-8 mb-6">
-      <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-        <ShoppingCart className="h-6 w-6 text-primary" />
-        Proposta Concierge
-      </h2>
-      
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div>
-          <h3 className="font-semibold mb-4 text-primary">Concierge Firewall</h3>
-          <ul className="text-sm text-muted-foreground space-y-2">
-            <li>• Proteção contra invasões</li>
-            <li>• Monitoramento contínuo 24/7</li>
-            <li>• Conformidade LGPD</li>
-            <li>• Controle de acessos</li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 className="font-semibold mb-4 text-primary">Concierge Endpoint</h3>
-          <ul className="text-sm text-muted-foreground space-y-2">
-            <li>• Defesa contra ransomware</li>
-            <li>• Resposta automatizada</li>
-            <li>• Proteção para trabalho remoto</li>
-            <li>• Prevenção de vazamentos</li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 className="font-semibold mb-4 text-primary">Concierge Backup</h3>
-          <ul className="text-sm text-muted-foreground space-y-2">
-            <li>• Backups automáticos</li>
-            <li>• Recuperação rápida</li>
-            <li>• Conformidade LGPD</li>
-            <li>• Testes de restore regulares</li>
-          </ul>
-        </div>
-      </div>
-
+    <div>
       {/* Investimento do Cliente */}
       <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/5 p-8 rounded-2xl">
         <h3 className="text-2xl font-semibold text-center mb-8">Investimento do Cliente</h3>
@@ -127,6 +90,6 @@ export function SimplifiedProposal() {
           </p>
         </div>
       </div>
-    </CyberCard>
+    </div>
   );
 }

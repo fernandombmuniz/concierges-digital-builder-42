@@ -686,7 +686,7 @@ export function Presentation() {
             Simulação Concierge
           </h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <SimplifiedProposal />
             
             {profile.equipamentoSugerido && (

@@ -694,6 +694,7 @@ export function Presentation() {
                 <h3 className="text-xl font-semibold text-primary">
                   🛡️ Equipamento Sugerido
                 </h3>
+                <div className="p-4 bg-secondary/20 rounded-lg border border-border">
                   <p className="text-lg font-medium text-foreground">
                     <span className="text-primary">Firewall Recomendado:</span> {profile.equipamentoSugerido}
                   </p>

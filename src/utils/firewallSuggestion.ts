@@ -37,7 +37,7 @@ const parseSpeed = (speedStr: string): number => {
   return numericSpeed;
 };
 
-export const suggestFirewall = (profile: Profile): string => {
+export const suggestFirewall = (profile: Profile): { sonicwall: string; fortinet: string } => {
   // Calculate total users - use estimated users if user plans to increase
   const totalUsers = profile.infraestrutura.usuariosPretensao 
     ? (profile.infraestrutura.usuariosEstimativa || profile.infraestrutura.usuariosAtuais)
@@ -51,47 +51,51 @@ export const suggestFirewall = (profile: Profile): string => {
     return total + speed;
   }, 0);
 
-  // Find suitable firewalls
-  const suitableFirewalls = firewallModels.filter(fw => 
+  // Separate firewalls by brand
+  const sonicwallModels = firewallModels.filter(fw => fw.brand === 'SonicWall');
+  const fortinetModels = firewallModels.filter(fw => fw.brand === 'Fortinet');
+
+  // Find suitable firewalls for each brand
+  const suitableSonicwall = sonicwallModels.filter(fw => 
+    fw.maxUsers >= totalUsers && fw.throughput >= totalThroughput
+  );
+  
+  const suitableFortinet = fortinetModels.filter(fw => 
     fw.maxUsers >= totalUsers && fw.throughput >= totalThroughput
   );
 
-  if (suitableFirewalls.length === 0) {
-    // If no firewall meets requirements, suggest the most powerful one
-    const mostPowerful = firewallModels.reduce((max, fw) => 
+  // Get SonicWall suggestion
+  let sonicwallSuggestion: string;
+  if (suitableSonicwall.length === 0) {
+    const mostPowerfulSonicwall = sonicwallModels.reduce((max, fw) => 
       (fw.maxUsers > max.maxUsers || (fw.maxUsers === max.maxUsers && fw.throughput > max.throughput)) ? fw : max
     );
-    return `${mostPowerful.brand} ${mostPowerful.model}`;
+    sonicwallSuggestion = mostPowerfulSonicwall.model;
+  } else {
+    suitableSonicwall.sort((a, b) => {
+      if (a.maxUsers !== b.maxUsers) return a.maxUsers - b.maxUsers;
+      return a.throughput - b.throughput;
+    });
+    sonicwallSuggestion = suitableSonicwall[0].model;
   }
 
-  // Sort by capacity (smallest first for most economical option)
-  suitableFirewalls.sort((a, b) => {
-    if (a.maxUsers !== b.maxUsers) return a.maxUsers - b.maxUsers;
-    return a.throughput - b.throughput;
-  });
-
-  // Check if we can suggest a lower model for "baixo" usage profile
-  if (profile.infraestrutura.perfilUso === 'baixo' && suitableFirewalls.length > 1) {
-    // Find the recommended model index
-    const recommendedIndex = 0; // First suitable model
-    
-    // Check if there's a model one level below in the same brand
-    const recommendedModel = suitableFirewalls[recommendedIndex];
-    const sameBrandModels = firewallModels.filter(fw => fw.brand === recommendedModel.brand);
-    const modelIndex = sameBrandModels.findIndex(fw => 
-      fw.model === recommendedModel.model && fw.maxUsers === recommendedModel.maxUsers
+  // Get Fortinet suggestion
+  let fortinetSuggestion: string;
+  if (suitableFortinet.length === 0) {
+    const mostPowerfulFortinet = fortinetModels.reduce((max, fw) => 
+      (fw.maxUsers > max.maxUsers || (fw.maxUsers === max.maxUsers && fw.throughput > max.throughput)) ? fw : max
     );
-    
-    if (modelIndex > 0) {
-      const lowerModel = sameBrandModels[modelIndex - 1];
-      // Only suggest lower model if it still covers at least 80% of requirements
-      if (lowerModel.maxUsers >= totalUsers * 0.8 && lowerModel.throughput >= totalThroughput * 0.8) {
-        return `${lowerModel.brand} ${lowerModel.model}`;
-      }
-    }
+    fortinetSuggestion = mostPowerfulFortinet.model;
+  } else {
+    suitableFortinet.sort((a, b) => {
+      if (a.maxUsers !== b.maxUsers) return a.maxUsers - b.maxUsers;
+      return a.throughput - b.throughput;
+    });
+    fortinetSuggestion = suitableFortinet[0].model;
   }
 
-  // Return the most economical suitable option
-  const suggested = suitableFirewalls[0];
-  return `${suggested.brand} ${suggested.model}`;
+  return {
+    sonicwall: sonicwallSuggestion,
+    fortinet: fortinetSuggestion
+  };
 };

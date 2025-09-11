@@ -102,7 +102,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         profile.infraestrutura.links.length > 0 && 
         profile.infraestrutura.perfilUso) {
       const suggestion = suggestFirewall(profile);
-      if (suggestion !== profile.equipamentoSugerido) {
+      if (JSON.stringify(suggestion) !== JSON.stringify(profile.equipamentoSugerido)) {
         setProfile(prev => ({ ...prev, equipamentoSugerido: suggestion }));
       }
     }

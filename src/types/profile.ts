@@ -77,6 +77,11 @@ export interface ObservacoesPorEtapa {
   etapa6: string;
 }
 
+export interface FirewallSuggestions {
+  sonicwall: string;
+  fortinet: string;
+}
+
 export interface Profile {
   empresa: EmpresaInfo;
   infraestrutura: InfraestruturaInfo;
@@ -85,7 +90,7 @@ export interface Profile {
   backup: BackupInfo;
   objetivos: ObjetivosInfo;
   observacoesPorEtapa: ObservacoesPorEtapa;
-  equipamentoSugerido?: string;
+  equipamentoSugerido?: FirewallSuggestions;
 }
 
 export interface RiskItem {

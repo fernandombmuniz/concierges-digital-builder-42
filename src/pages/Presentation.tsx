@@ -7,6 +7,7 @@ import { SimplifiedProposal } from '@/components/SimplifiedProposal';
 import { NotasInternas } from '@/components/NotasInternas';
 import { useProfile } from '@/contexts/ProfileContext';
 import { computeRisks } from '@/utils/riskCalculator';
+import { suggestFirewall } from '@/utils/firewallSuggestion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import jsPDF from 'jspdf';
@@ -27,6 +28,7 @@ import {
 
 export function Presentation() {
   const { profile, setCurrentStep } = useProfile();
+  const firewallSuggestions = profile ? suggestFirewall(profile) : null;
   
   const risks = computeRisks(profile);
 
@@ -221,6 +223,24 @@ export function Presentation() {
                 ${profile.objetivos.monitoramento247 ? '<li>✅ Monitoramento 24/7</li>' : '<li>❌ Monitoramento 24/7</li>'}
                 ${profile.objetivos.auditoriaCompliance ? '<li>✅ Auditoria e Compliance</li>' : '<li>❌ Auditoria e Compliance</li>'}
               </ul>
+            </div>
+
+            <div class="section">
+              <h2>🛡️ Equipamentos Sugeridos</h2>
+              <div class="grid">
+                <div class="card">
+                  <h3>SonicWall ${firewallSuggestions?.sonicwall || 'N/A'}</h3>
+                  <p>Baseado em ${profile.infraestrutura.usuariosPretensao 
+                    ? (profile.infraestrutura.usuariosEstimativa || profile.infraestrutura.usuariosAtuais) + ' usuários estimados' 
+                    : profile.infraestrutura.usuariosAtuais + ' usuários atuais'} e velocidade total dos links</p>
+                </div>
+                <div class="card">
+                  <h3>Fortinet ${firewallSuggestions?.fortinet || 'N/A'}</h3>
+                  <p>Baseado em ${profile.infraestrutura.usuariosPretensao 
+                    ? (profile.infraestrutura.usuariosEstimativa || profile.infraestrutura.usuariosAtuais) + ' usuários estimados' 
+                    : profile.infraestrutura.usuariosAtuais + ' usuários atuais'} e velocidade total dos links</p>
+                </div>
+              </div>
             </div>
 
             <div class="section">
@@ -689,24 +709,23 @@ export function Presentation() {
           <div className="space-y-6">
             <SimplifiedProposal />
             
-            {profile.equipamentoSugerido && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-primary">
-                  🛡️ Equipamento Sugerido
-                </h3>
-                <div className="p-4 bg-secondary/20 rounded-lg border border-border">
-                  <p className="text-lg font-medium text-foreground">
-                    <span className="text-primary">Firewall Recomendado:</span> {profile.equipamentoSugerido}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Baseado em {profile.infraestrutura.usuariosPretensao 
-                      ? `${profile.infraestrutura.usuariosEstimativa} usuários estimados` 
-                      : `${profile.infraestrutura.usuariosAtuais} usuários atuais`} 
-                    e perfil de uso {profile.infraestrutura.perfilUso}
-                  </p>
+            <div>
+              <CyberCard className="p-6">
+                <h3 className="text-xl font-semibold mb-4 text-center">Equipamentos Sugeridos</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-background/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary mb-1">
+                      SonicWall {firewallSuggestions?.sonicwall}
+                    </div>
+                  </div>
+                  <div className="text-center p-4 bg-background/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary mb-1">
+                      Fortinet {firewallSuggestions?.fortinet}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              </CyberCard>
+            </div>
           </div>
         </CyberCard>
 

@@ -23,7 +23,8 @@ import {
   AlertTriangle,
   ShieldCheck,
   Database,
-  FileText
+  FileText,
+  Network
 } from 'lucide-react';
 
 export function Presentation() {
@@ -707,6 +708,96 @@ export function Presentation() {
           </h2>
           
           <div className="space-y-6">
+            {/* Perfil de Rede do Cliente */}
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Perfil de Rede do Cliente</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-4 border border-border rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Usuários</span>
+                  </div>
+                  <div className="text-sm space-y-1">
+                    <div>Atuais: {profile.infraestrutura.usuariosAtuais}</div>
+                    {profile.infraestrutura.usuariosPretensao && (
+                      <div>Estimativa: {profile.infraestrutura.usuariosEstimativa}</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 border border-border rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Monitor className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Dispositivos</span>
+                  </div>
+                  <div className="text-sm space-y-1">
+                    <div>Atuais: {profile.infraestrutura.dispositivosAtuais}</div>
+                    {profile.infraestrutura.dispositivosPretensao && (
+                      <div>Estimativa: {profile.infraestrutura.dispositivosEstimativa}</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 border border-border rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Wifi className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Conectividade</span>
+                  </div>
+                  <div className="text-sm space-y-1">
+                    {profile.infraestrutura.links.length > 0 ? (
+                      profile.infraestrutura.links.map((link, index) => (
+                        <div key={index}>
+                          {link.provedor}: {link.velocidade}Mbps
+                        </div>
+                      ))
+                    ) : (
+                      <div>Não informado</div>
+                    )}
+                  </div>
+                </div>
+
+                {profile.infraestrutura.perfilUso && (
+                  <div className="p-4 border border-border rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Network className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Perfil de Uso</span>
+                    </div>
+                    <div className="text-sm">
+                      {profile.infraestrutura.perfilUso}
+                    </div>
+                  </div>
+                )}
+
+                {profile.conectividade.wifiTipo && (
+                  <div className="p-4 border border-border rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Wifi className="h-4 w-4 text-primary" />
+                      <span className="font-medium">Wi-Fi</span>
+                    </div>
+                    <div className="text-sm space-y-1">
+                      <div>Tipo: {profile.conectividade.wifiTipo}</div>
+                      {profile.conectividade.apsQuantidade > 0 && (
+                        <div>APs: {profile.conectividade.apsQuantidade}</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {profile.conectividade.usaVPN && (
+                  <div className="p-4 border border-border rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="h-4 w-4 text-primary" />
+                      <span className="font-medium">VPN</span>
+                    </div>
+                    <div className="text-sm space-y-1">
+                      <div>Acessos: {profile.conectividade.acessosVPNQuantidade}</div>
+                      <div>Uso: {profile.conectividade.usoVPN}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <SimplifiedProposal />
             
             <div>
